@@ -1,3 +1,5 @@
+# This is a python translation of SBBX_to_txt.f
+# original GISS fortran code on their server in https://data.giss.nasa.gov/pub/gistemp/
 import sys
 import struct
 # fort is the fort.py file in the gistemp directory tool/
