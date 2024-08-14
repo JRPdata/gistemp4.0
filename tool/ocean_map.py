@@ -1,6 +1,7 @@
 # takes a SBBX txt output and uses an entire year to generate an ocean map of what grid boxes is covered
 # Hansen2010 (Fig13, bottom right) discusses an all year ice free ocean map, but the 8000 subgrid boxes in the SBBX mask changes from month to month
 # this outputs inclusively what is covered for a whole year for each grid box
+# run to get the txt file first: python3 tool/SBBX_to_txt.py tmp/input/SBBX.ERSSTv5
 filename = 'tmp/input/SBBX.ERSSTv5.txt'
 import geojson
 import cartopy.crs as ccrs
