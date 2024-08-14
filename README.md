@@ -1,6 +1,8 @@
-# (UNOFFICIAL) modified gistemp4.0 and utilities to generate approximate ERSSTv5 (not at all a carbon copy of operational gistemp)
+# (UNOFFICIAL) modified gistemp4.0 and utilities to generate approximate ERSSTv5
 
-EXPERIMENTAL: DO NOT USE!
+## EXPERIMENTAL: DO NOT USE! ##
+
+**This is not at all a carbon copy of operational gistemp).**
 
 GISTEMP 4.0 modified to run on later python, numpy (tested on python (pypy) 3.12, numpy 2.0.1).
 
@@ -18,7 +20,7 @@ Some of the python utilities added to gistemp are hardcoded, so you have to plac
 
 All utilities in tools/ are meant to be run from the main directory.
 
-# How to run
+## How to run
 
 Run gistemp (by itself using all GISS data, for reference). results are in tmp/result/ (mixedGLB.Ts.ERSSTV5.GHCN.CL.PA.csv is the gistemp global LOTI)
 ```
