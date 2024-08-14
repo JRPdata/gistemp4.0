@@ -1,0 +1,25 @@
+# Configuration file for gistemp, describing the
+# location and form of all source datasets.
+#
+# Nick Barnes, Climate Code Foundation, 2012-05-24
+# Avi Persin, Revision 2016-01-06
+
+# For the syntax and usage of this file, see
+#
+# python tool/fetch.py --help.
+
+# GHCNv4 data
+file: https://data.giss.nasa.gov/pub/gistemp/ghcnm.tavg.qcf.dat
+
+# ERRSTv5 data
+bundle: https://data.giss.nasa.gov/pub/gistemp/SBBX.ERSSTv5.gz
+member: SBBX.ERSSTv5
+
+# station metadata
+file: https://data.giss.nasa.gov/pub/gistemp/v4.inv
+
+# Configuration for code to discard some suspect ('strange') data.
+file: https://data.giss.nasa.gov/pub/gistemp/Ts.strange.v4.list.IN_full
+
+# brightness index data
+file: https://data.giss.nasa.gov/pub/gistemp/wrld-rad.data.txt

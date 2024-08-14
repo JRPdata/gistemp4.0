@@ -1,0 +1,134 @@
+Overview of gistemp
+
+gistemp is a software product written in the Python programming language. 
+It is a replication of the original GISTEMP, written in fortran and Python.
+
+The concept was developed at NASA/GISS by James Hansen and Sergei Lebedeff.
+It was coded in fortran by Sergei, later rewritten and modified by Reto Ruedy.
+Jay Glascoe added preliminary parts written in python (Step 1). 
+Reto Ruedy added the urban adjustment routines in fortran (Step2).
+All this work was done at NASA/GISS.
+
+David Jones' team, Climate Code Foundation, reprogrammed the whole procedure in python, as a product 
+of the Clear Climate Code project and the Climate Code Foundation, http://clearclimatecode.org/
+
+Finally, it was modified and upgraded to python3.4 by Avraham Persin at NASA/GISS.
+
+gistemp is a reconstruction of the global historical temperature anomalies, and is described and 
+used on the NASA/GISS webpage: https://data.giss.nasa.gov/gistemp/
+
+Broadly the GISTEMP algorithm takes historical temperature data from land-based weather stations 
+as input, and combines these data to produce an estimate of temperature change over large regions.
+In addition, sea surface temperature data (which has already been processed to some extent) 
+can be combined with land station data.
+
+This document provides an overview of the algorithm, and in particular attempts to link the high
+level organisation of the algorithm with its published description in the scientific literature.
+
+The key GISTEMP paper is Hansen and Lebedeff 1987 which describes the basic gridding scheme.  
+There have been many modifications to the algorithm since then; a review of GISTEMP, Hansen et al 2010, 
+documents most of those changes and additions. Further updates are available on the 
+website https://data.giss.nasa.gov/gistemp/updates_v3 .
+
+Algorithm
+
+The GISTEMP algorithm is organised as a series of steps.  Data flows through the steps in a pipeline.  
+Early steps deal with station records, later steps grid the data before final large area averages are computed.  
+
+Notes:
+- Originally only one source was used, so the Step 0 below was void. 
+  It may well be that this will be the case again in the future.
+- Similarly, Step 1 also became much simpler with the transition to NOAA/NCEI's GHCN v3: 
+  The quality control and the combination of records from various sources for the same location is now done 
+  by the provider of GHCN v3. What is left is the elimination of a short list of suspected outliers 
+  and duplications and has no noticeable impact on the results. 
+- In GHCN v3, the various sources for the same location are combined without trying to avoid discontinuities
+  in the transitions; instead, these together with other discontinuities are dealt with in the subsequent
+  NOAA/NCEI homogenization - hence those homogenized (adj) data are used as basis for the gistemp analysis. 
+  The homogenization also ameliorates urbanization effects with the result that the impact and necessity 
+  of Step 2 is also diminished.
+
+The steps are:
+
+Step 0: Data are downloaded from websites maintained by the provider of these sources:
+        NOAA/NCEI provides the bulk of the data as currently GHCN v3
+        SCAR/READER provides reports from stations in and near Antarctica.
+        Currently, missing data for the following two stations are filled from reports made available 
+        by two individual contributors: Hohenpeissenberg (GHCN v3), Byrd Station (SCAR).
+ 
+Step 1: Under the control of a configuration file, various stations and periods of station records are discarded. 
+        The list of these suspected outliers is partially a holdover from applying the QC methods described in 
+        Hansen et al 1999 documents, or by a visual inspection of recent anomaly maps and comparing data that 
+        seem out of range to the reports of other sources like weather underground. 
+        That list also contains stations that are being disregarded, since a more trusted record is available; 
+        the SCAR READER/Surface data are the most trusted source, the adjusted GHCN v3 data are next. Data from 
+        the other two SCAR sources (automatic weather stations and  CRC/Australian data) are trusted the least.
+
+Step 2: Urban Adjustment.  (Short records are discarded). Stations identified as urban, using values obtained 
+        from satellite measurements of nighttime brightness, have their trend adjusted to match the trend of 
+        a composite record made from nearby rural stations. At least 2/3 of the adjusted period must have 
+        3 rural stations contributing to the composite record.  Periods and stations that do not have sufficient
+        support from rural stations are dropped.  The composite rural record is made from rural stations within 500 km, 
+        or 1000 km if necessary to meet the above requirement. This step is documented in 
+        Hansen et al 1999 (the basic scheme), 
+        Hansen et al 2001 (allowing the break point in a two leg fit to vary in time), and 
+        Hansen et al 2010 (the use of satellite nightlights).
+  
+Step 3: Gridding.  A grid of cells is selected (8000 equal area cells covering the globe, see note below), 
+        and for each cell a composite series is computed from station records within 1200 km of the cell center.  
+        Each contributing record is weighted according to its distance from the cell center, linearly decreasing to 0 
+        at a distance of 1200 km.  This step is documented in Hansen and Lebedeff 1987.
+
+Step 4: Sea Surface Temperatures.  Gridded sea surface temperatures are read from a file prepared by GISS using data 
+        publicly provided by other sources (currently NOAA/NCEI's ERSST v4) and revised with recent monthly updates.  
+        Sea surface temperature data are only used if the location is ice free, data from locations containing sea ice 
+        are discarded. This step is documented in Hansen et al 2010.
+
+Step 5: Ocean merging.  Ocean (Sea Surface Temperatures) and Land (Near Surface Air Temperatures) are "merged".  
+        A cell that has both ocean and land records selects either the ocean or the land record:
+        the land record is discarded unless the ocean record is short or the land record has a contributing 
+        land station within 100 km (in which case the ocean record is discarded).  This part is documented in 
+        Hansen et al 1996.  In order to produce three analyses for land-only, ocean-only, and combined land-ocean, 
+        three maps of cells are produced and go forward to the following Zonal and Global Average steps: 
+        one containing only land data, one containing only ocean data, and one containing mixed land and ocean data as described above. 
+
+Zonal Averages.  Each hemisphere is divided into 4 zones by splitting at the latitudes that have sines of 0.4, 0.7, 0.9 (and 0 and 1); 
+                 the latitudes of the zone boundaries are approximately 23.6, 44.4, and 64.2 degrees.  
+                 For each zone all the cells in that zone are combined into a single record.  
+                 Large regional averages (hemispheres, tropics, northern- and southern-extratropics) are computed by combining zones 
+                 in various combinations, each zone weighted according to the zone's area.  Zonal averaging is documented in 
+                 Hansen and Lebedeff 1987 and Hansen et al 2006 (each of which describes an alternate scheme, the latter is what 
+                 is currently implemented, but relictual code exists for the former).
+
+Global Average.  A global series is computed by combining northern- and southern-hemisphere series, weighted equally. 
+
+Annual series are computed from their monthly counterparts. Each month is weighted equally.
+
+Step 6: various visualizations are produced (only some of which we do).
+
+
+A note on gridding
+
+The grid used (in step 3 and subsequently) divides the globe into 8000 equal area cells.  
+It is based on the zonal scheme outlined in Step 5 above.  There are 4 zones per hemisphere, 
+and the choice of sines means that the zones have areas in the ratio 4:3:2:1.  
+Each zone is divided by longitude into a number of boxes proportional to the area of the zone: 16, 12, 8, 4. 
+Thus there are 80 boxes, all having the same area.  
+Each box is divided into 100 (10 by 10) cells each having equal area. The 40 cells surrounding the North Pole 
+and the 40 cells surrounding the South Pole are treated as single cells (a change introduced on 2016-09-12).
+
+
+REFERENCES (see: https://data.giss.nasa.gov/gistemp/references.html )
+
+Hansen and Lebedeff 1987 https://pubs.giss.nasa.gov/abs/ha00700d.html
+Hansen et al 1996 https://pubs.giss.nasa.gov/abs/ha04000r.html
+Hansen et al 1999 https://pubs.giss.nasa.gov/abs/ha03200f.html
+Hansen et al 2001 https://pubs.giss.nasa.gov/abs/ha02300a.html
+Hansen et al 2006 https://pubs.giss.nasa.gov/abs/ha07110b.html
+Hansen et al 2010 https://pubs.giss.nasa.gov/abs/ha00510u.html
+
+HISTORY
+
+2010-11-19 DRJ  Updated Step 1, and fixed reference.
+2010-11-19 DRJ  Created (from e-mail).
+2016-12-18 Updated by Reto Ruedy
