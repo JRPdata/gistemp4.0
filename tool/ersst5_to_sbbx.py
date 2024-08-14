@@ -30,7 +30,7 @@ from pyproj import Proj, transform
 from pyproj import Transformer
 # Import the grid8k function from eqarea.py located in the ../steps directory
 import sys
-sys.path.append('../steps')
+sys.path.append('steps')
 from eqarea import grid8k
 
 # performance
@@ -47,15 +47,15 @@ do_generate_subbox_parquets = True
 # baseline for averaging subboxes
 baseline_start_year = 1951
 baseline_end_year = 1980
-ersst_monthly_means = '../tmp/input/sst.mnmean.nc'
+ersst_monthly_means = 'tmp/input/sst.mnmean.nc'
 intermediate_path = 'intermediate_chunks'
 # SBBX_to_txt.f output for the reference subboxes to include
 # i.e.: run gistemp step 0, rename reference file to .orig after extracting, run SBBX_to_txt (fortran program)
-orig_sst_txt_path = '../tmp/input/SBBX.ERSSTv5.orig.txt'
-subbox_temps_parquet_path = '../subbox_temps.parquet'
-subbox_temps_anomalies_parquet_path = '../subbox_temps_anomalies.parquet'
-baseline_parquet_path = '../subbox_baseline_temps.parquet'
-output_sbbx = '../tmp/input/SBBX.ERSSTv5'
+orig_sst_txt_path = 'tmp/input/SBBX.ERSSTv5.orig.txt'
+subbox_temps_parquet_path = 'subbox_temps.parquet'
+subbox_temps_anomalies_parquet_path = 'subbox_temps_anomalies.parquet'
+baseline_parquet_path = 'subbox_baseline_temps.parquet'
+output_sbbx = 'tmp/input/SBBX.ERSSTv5'
 # year to extract from sst orig.txt (from SBBX_to_txt.f)
 reference_subbox_year = 2023
 # Clip the SBBX data starting from more reliably records to match gistemp

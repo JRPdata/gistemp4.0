@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 
 # Load reference file
-ref_file = pd.read_csv('SBBX.ERSSTv5.orig.txt', skiprows=2, sep=r'\s+')
+ref_file = pd.read_csv('tmp/input/SBBX.ERSSTv5.orig.txt', skiprows=2, sep=r'\s+')
 
 # Load other files
-files = ['SBBX.ERSSTv5.cutoff_project_area.txt', 
-         'SBBX.ERSSTv5.no_cutoff_geo_area.txt', 
-         'SBBX.ERSSTv5.no_cutoff_project_area.txt']
+files = ['tmp/input/SBBX.ERSSTv5.cutoff_project_area.txt', 
+         'tmp/input/SBBX.ERSSTv5.no_cutoff_geo_area.txt', 
+         'tmp/input/SBBX.ERSSTv5.no_cutoff_project_area.txt']
 
 for file in files:
     # Load file
