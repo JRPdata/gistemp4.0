@@ -226,12 +226,16 @@ class SubboxReaderNpz(object):
     """
 
     def __init__(self, file, celltype=None):
-        self.f = np.load(file + '.npz')
+        self.f = np.load(file + '.npz', allow_pickle=True)
         meta = self.f['meta']
         title = meta[-1]
         self.meta = giss_data.SubboxMetaData(*meta)
         self.f.files.remove('meta')
-        self.f.files = sorted(self.f.files, key=lambda t: int(t.split('_')[1]))
+        #self.files = self.f['arr']
+        files = {f'arr_{i}': arr for i, arr in enumerate(self.f['arr'])}
+        self.f.files = sorted(files, key=lambda t: int(t.split('_')[1]))
+        self.f = files
+        #self.f.files = sorted(self.f.files['arr'], key=lambda t: int(t.split('_')[1]))
         assert self.meta.mavg == 6, "Only monthly averages supported"
         if type(title) is bytes:
             title = title.decode()
@@ -905,7 +909,8 @@ def step3_output(data):
             textout.write(thing)
         gotmeta = True
         yield thing
-    np.savez_compressed(out.file, *out.result, meta=out.meta)
+    #np.savez_compressed(out.file, *out.result, meta=out.meta)
+    np.savez_compressed(out.file, arr=np.array(out.result, dtype=object), meta=out.meta)
     print("Step 3: closing output file")
     out.close()
     textout.close()
@@ -937,7 +942,7 @@ def make_3d_array(a, b, c):
 
 def step4_find_monthlies(latest_year, latest_month):
     dates = {}
-    filename_re = re.compile('^oiv2mon\.([0-9][0-9][0-9][0-9])([0-9][0-9])(\.gz)?$')
+    filename_re = re.compile(r'^oiv2mon\.([0-9][0-9][0-9][0-9])([0-9][0-9])(\.gz)?$')
     for f in os.listdir(INPUT_DIR):
         m = filename_re.match(f)
         if m:
@@ -964,13 +969,12 @@ def step4_load_sst_monthlies(latest_year, latest_month):
 
     # Read in the SST data for recent years
     sst = make_3d_array(360, 180, 12 * n_years)
-
     dates = []
     for (date, file) in files:
         dates.append(date)
+        print("reading", file)
         (year, month) = date
         f = open_or_uncompress(file)
-        print("reading", file)
         f = fort.File(f, bos=">")
         f.readline()  # discard first record
         data = f.readline()
@@ -1000,7 +1004,7 @@ alternatives = ("(?:" +
                 ]) + ")")
 rTitle = re.compile(r"Monthly Sea Surface Temperature anom \(C\) " +
                     alternatives +
-                    " *(\d+)/(\d+)")
+                    r" *(\d+)/(\d+)")
 
 
 def find_ocean_file():
@@ -1049,8 +1053,9 @@ def step4_output(data):
     for land, ocean in data:
         out.write(ocean)
         yield land, ocean
-    np.savez_compressed(out.file, *out.result, meta=out.meta)
     print("Step4: closing output file")
+    #np.savez_compressed(out.file, *out.result, meta=out.meta)
+    np.savez_compressed(out.file, arr=np.array(out.result, dtype=object), meta=out.meta)
     out.close()
     progress = open(PROGRESS_DIR + 'progress.txt', 'a')
     progress.write("\nStep4: closing output file\n")
@@ -1161,7 +1166,8 @@ def step5_bx_output(meta, data):
         result.append(rec)
         yield record
 
-    np.savez_compressed(boxf, *result, meta=info)
+    np.savez_compressed(boxf, arr=np.array(result, dtype=object), meta=info)
+    #np.savez_compressed(boxf, *result, meta=info)
     print("Step 5: Closing box file:", boxf.name)
     boxf.close()
     progress = open(PROGRESS_DIR + 'progress.txt', 'a')
@@ -1538,7 +1544,8 @@ Year  Glob  NHem  SHem    -90N  -24N  -24S    -90N  -64N  -44N  -24N  -EQU  -24S
     meta_data = np.array(meta_data, dtype=object)
     for jz in range(jzm):
         result.append([[zone_titles[jz].encode()], np.array(data[jz]).ravel()])
-    np.savez_compressed(zono, *result, meta=meta_data)
+    #np.savez_compressed(zono, *result, meta=meta_data)
+    np.savez_compressed(zono, arr=np.array(result, dtype=object), meta=meta_data)
     zono.close()
 
 

@@ -25,7 +25,7 @@ def get_changes_dict():
     """
 
     dict = {}
-    for line in open(INPUT_DIR + 'Ts.strange.v4SCAR.list.IN_full', 'r'):
+    for line in open(INPUT_DIR + 'Ts.strange.v4.list.IN_full', 'r'):
         split_line = line.split()
         id = split_line[0]
         try:

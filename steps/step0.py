@@ -23,11 +23,14 @@ def earthly(records):
     pairs dict is returned.
     """
     for id, record in records.items():
-        station = record.station
-        if (-90.0 <= station.lat <= 90.0) and (-180.0 <= station.lon <= 180.0):
-            yield id, record
-        else:
-            print("%s has invalid latitude/longitude" % station.uid)
+        try:
+            station = record.station
+            if (-90.0 <= station.lat <= 90.0) and (-180.0 <= station.lon <= 180.0):
+                yield id, record
+            else:
+                print("%s has invalid latitude/longitude" % station.uid)
+        except:
+            print("%s has no station" % record)
 
 
 def append_scar():

@@ -156,7 +156,7 @@ class Fetcher(object):
 
     def key_lines(self):
         comment_re = re.compile(r'((.*?[^\\])??)#')
-        key_re = re.compile('^([a-zA-Z_]+)\s*:\s*(.*)$')
+        key_re = re.compile(r'^([a-zA-Z_]+)\s*:\s*(.*)$')
         for (no, l) in zip(itertools.count(1), open(self.config_file)):
             m = comment_re.match(l)
             if m:
