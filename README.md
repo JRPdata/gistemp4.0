@@ -22,6 +22,8 @@ All utilities in tools/ are meant to be run from the main directory.
 
 ## How to run
 
+NOTE: Make sure to delete old parquets in main directory before running on new data. GHCNM data still needs to be downloaded, extracted, and renamed in tmp/input to ghcnm.tavg.qcf.dat and v4.inv respectively from the tar.gz if you are using the most up-to-date version.
+
 Run gistemp (by itself using all GISS data, for reference). results are in tmp/result/ (mixedGLB.Ts.ERSSTV5.GHCN.CL.PA.csv is the gistemp global LOTI)
 ```
 python3 tool/run.py
