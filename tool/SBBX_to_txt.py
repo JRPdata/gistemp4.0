@@ -22,7 +22,10 @@ class SubboxReader:
         rec = self.f.readline()
         (self.mo1, self.kq, self.mavg, self.monm, self.monm4, self.yrbeg,
          self.missing_flag, self.precipitation_flag, self.title) = struct.unpack(self.bos + '8i80s', rec)
-
+        print("yrbeg:", self.yrbeg)
+        print("self.mo1", self.mo1)
+        print("self.monm", self.monm)
+        print("self.monm4", self.monm4)
         self.title = self.title.decode('latin-1').strip()
 
         assert self.mavg == 6, "Only monthly averages supported"
@@ -61,7 +64,7 @@ class SubboxReader:
                 #print(f"Error: Expected {expected_size} bytes but got {len(rec)} bytes. Skipping record")
                 continue
             else:
-                #print("Expected {expected_size:", expected_size, len(rec))
+                #print("Expected size, len(rec):", expected_size, len(rec))
                 pass
 
             fields = list(struct.unpack(self.bos + fmt, rec))
