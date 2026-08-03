@@ -1,0 +1,33 @@
+# This directory contains the tools and files to convert NCEI ERSSTv6 monthly netCDF files to fortran binaries and then convert to SBBX format.
+
+Tools:
+(A) original GISTEMP fortran code to produce the SBBX (called by coordinator programs)
+(B) nc_to_fortran_binary_parallel.py - a standalone tool that converts the NCEI netCDF monthly files to fortran binaries (code is  repeated in the coordinator so it is not a dependency)
+(C) ERSSTv6_to_SBBX.py - coordinator program that converts the netCDF monthly files into fortran files and then runs the three fortran programs with the correct arguments (alternatively, run (B) and then run updateERSST.sh)
+
+
+Use instructions:
+1) Must modify the paths in toolconfig.py
+2) Compile the fortran programs by running `make` in the current folder (requires gfortran). Note: I've tweaked the compile flags a bit.
+    Any warnings (like compile warnings that are "deleted feature" seemingly can be ignored)
+3) Make sure the monthly ersstv6 files are already downloaded and complete (use tool/download_sst.py for this)
+4) run python3 ERSSTv6_to_SBBX.py
+
+After this you should have SBBX.ERSSTv6 in this folder
+
+Notes:
+There are nominal discrepancies with the GISTEMP version that would show up in a text conversion tool (the differences are actually on order of 1e-5, but show up in a few places in the text file since solely due to rounding to 0.01).
+This was verified by using ../tool/compare_sbbx.py with a ERSSTv5 version of this tool (not provided) and other manual examinations and comparisons of the last official ERSSTv5 SBBX provided (valid month of June 2026).
+This seems unavoidable due to a combination of the use of a modern fortran compiler and a different environment (processor) in comparison with how the official SBBX is generated.
+The same effect is seen with the pure python version in ../ersstv6py, which produces an output that is identical to this program.
+
+For reference, the current output looks like this:
+
+$ python3 ersstv6_to_sbbx.py 
+Found 2118 files total (1758 from 1880 onwards)
+Verified continuous sequence: (1880, 1) to (2026, 6)
+Reading ERSSTv6 .nc files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1758/1758 [00:10<00:00, 175.75it/s]
+Processing 1758 months: 1880-01 .. 2026-06
+Regridding to equal-area boxes: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1758/1758 [00:03<00:00, 582.52it/s]
+Writing trimmed SBBX records: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 8000/8000 [00:00<00:00, 58115.99it/s]
+Wrote /mnt/xfs/JRPdata/cleangistemp/gistemp4.0/ersstv6py/SBBX.ERSSTv6

@@ -1,0 +1,2 @@
+# directory to store the ERSSTv6 monthly .nc files and a manifest for them
+# download them using ../tool/download_sst.py

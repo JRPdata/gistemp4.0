@@ -1,0 +1,20 @@
+# This directory contains the tools and files to convert NCEI ERSSTv6 monthly into SBBX format.
+# This tool is a python translation of the original GISTEMP fortran code to generate the SBBX files, written by Claude
+# Use either this tool or the toolchain in ../ersstv6 tool (they are equivalent, but see README their also, especially the Notes)
+
+Tools:
+(A) convert_ersst_mask_to_npz.py - converts the original fortran open ocean mask to .npz (only provided for reference, as I've already provided the converted .npz, and only needs to be run once).
+(B) ersstv6_to_sbbx.py - uses the NCEI ERSSTv6 monthly netCDF files to create the SBBX used by GISTEMP
+
+Use instructions:
+1) Must modify the paths in toolconfig.py
+2) Make sure the monthly ersstv6 files are already downloaded and complete (use tool/download_sst.py for this)
+3) run python3 ersstv6_to_sbbx.py
+
+After this you should have SBBX.ERSSTv6 in this folder.
+
+Notes:
+There are nominal discrepancies with the GISTEMP version of the SBBX data (on order of 1e-5). See README notes in ../ersstv6/README for further details.
+See CLAUDE_NOTES.md for more details on ersstv6_to_sbbx.py.
+This tool also supports outputting (simultaneously or alone) the same resulting subbox data in a .npz format for easier examination. It also has far more argument options so its less hardcoded.
+Tested with ../tool/compare_sbbx.py against the fortran version to confirm they are exactly identical. `diff` also shows the subbox binaries are identical.
