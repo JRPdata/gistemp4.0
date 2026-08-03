@@ -11,9 +11,9 @@
 # GHCNv4 data
 file: https://data.giss.nasa.gov/pub/gistemp/ghcnm.tavg.qcf.dat
 
-# ERRSTv5 data
-bundle: https://data.giss.nasa.gov/pub/gistemp/SBBX.ERSSTv5.gz
-member: SBBX.ERSSTv5
+# ERRSTv6 data
+bundle: https://data.giss.nasa.gov/pub/gistemp/SBBX.ERSSTv6.gz
+member: SBBX.ERSSTv6
 
 # station metadata
 file: https://data.giss.nasa.gov/pub/gistemp/v4.inv

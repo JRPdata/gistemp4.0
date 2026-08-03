@@ -1001,6 +1001,7 @@ alternatives = ("(?:" +
                     "ERSST 01/1880 -",  # since 2013, the usual analysis
                     "ERSSTv4 01/1880 -",  # since 08/2015, the usual analysis
                     "ERSSTv5 01/1880 -",  # for ERSST v5
+                    "ERSSTv6 01/1880 -"  # since 07/2026
                 ]) + ")")
 rTitle = re.compile(r"Monthly Sea Surface Temperature anom \(C\) " +
                     alternatives +
@@ -1296,8 +1297,8 @@ def step5_output(results):
     """
     for item in results:
         step5_output_one(item)
-    to_csv(['mixedGLB.Ts.ERSSTV5.GHCN.CL.PA.txt', 'mixedNH.Ts.ERSSTV5.GHCN.CL.PA.txt',
-            'mixedSH.Ts.ERSSTV5.GHCN.CL.PA.txt', 'mixedZonAnn.Ts.ERSSTV5.GHCN.CL.PA.txt',
+    to_csv(['mixedGLB.Ts.ERSSTV6.GHCN.CL.PA.txt', 'mixedNH.Ts.ERSSTV6.GHCN.CL.PA.txt',
+            'mixedSH.Ts.ERSSTV6.GHCN.CL.PA.txt', 'mixedZonAnn.Ts.ERSSTV6.GHCN.CL.PA.txt',
             'landGLB.Ts.GHCN.CL.PA.txt', 'landNH.Ts.GHCN.CL.PA.txt', 'landSH.Ts.GHCN.CL.PA.txt',
             'landZonAnn.Ts.GHCN.CL.PA.txt'])
     return "Step 5 Completed"
@@ -1336,11 +1337,11 @@ def set_display_name(filename):
     display_names = {"landGLB.Ts.GHCN.CL.PA": "Station: Global Means",
                      "landNH.Ts.GHCN.CL.PA": "Station: Northern Hemispheric Means",
                      "landSH.Ts.GHCN.CL.PA": "Station: Southern Hemispheric Means",
-                     "mixedGLB.Ts.ERSSTV5.GHCN.CL.PA": "Land-Ocean: Global Means",
-                     "mixedNH.Ts.ERSSTV5.GHCN.CL.PA": "Land-Ocean: Northern Hemispheric Means",
-                     "mixedSH.Ts.ERSSTV5.GHCN.CL.PA": "Land-Ocean: Southern Hemispheric Means",
+                     "mixedGLB.Ts.ERSSTV6.GHCN.CL.PA": "Land-Ocean: Global Means",
+                     "mixedNH.Ts.ERSSTV6.GHCN.CL.PA": "Land-Ocean: Northern Hemispheric Means",
+                     "mixedSH.Ts.ERSSTV6.GHCN.CL.PA": "Land-Ocean: Southern Hemispheric Means",
                      "landZonAnn.Ts.GHCN.CL.PA": "Station: Annual Zonal Means",
-                     "mixedZonAnn.Ts.ERSSTV5.GHCN.CL.PA": "Land-Ocean: Annual Zonal Means",
+                     "mixedZonAnn.Ts.ERSSTV6.GHCN.CL.PA": "Land-Ocean: Annual Zonal Means",
                      }
     if filename in display_names:
         return display_names[filename]
@@ -1391,10 +1392,10 @@ def step5_output_one(item):
     # Remove everything up to the first ')' of the title.
     if mode == 'mixed':
         data_category = 'Land-Ocean'
-        sources = 'sources:  GHCN-v4 1880-' + cur_month + '/' + cur_year + ' + SST: ERSST v5 1880-' + cur_month + '/' + cur_year + '\n'
+        sources = 'sources:  GHCN-v4 1880-' + cur_month + '/' + cur_year + ' + SST: ERSST v6 1880-' + cur_month + '/' + cur_year + '\n'
     elif mode == 'ocean':
         data_category = 'Ocean'
-        sources = 'sources:  SST: ERSST v5 1880-' + cur_month + '/' + cur_year + '\n'
+        sources = 'sources:  SST: ERSST v6 1880-' + cur_month + '/' + cur_year + '\n'
     else:
         data_category = 'Station'
         sources = 'sources:  GHCN-v4 1880-' + cur_month + '/' + cur_year + ' (meteorological stations only)\n'

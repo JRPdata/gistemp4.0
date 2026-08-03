@@ -1,3 +1,6 @@
+# download_sst.py
+# make sure to update paths in toolconfig.py first
+
 import datetime
 import requests
 import subprocess
@@ -7,14 +10,16 @@ import json
 import sys
 
 from bs4 import BeautifulSoup
+import toolconfig
 
-CURL_PATH = '/mnt/xfs/envs/myenv/bin/curl'
+CURL_PATH = str(toolconfig.CURL_PATH)
+SST_NCEI_PATH = toolconfig.SST_NCEI_PATH
 BASE_URL = "https://www.ncei.noaa.gov/data/sea-surface-temperature-extended-reconstructed/v6/access/"
-MANIFEST_FILE = "download_manifest.json"
+MANIFEST_FILE = str(SST_NCEI_PATH / "download_manifest.json")
 TIME_WINDOW = 48 * 3600  # 48 hours in seconds
 
 
-# ---------------------- MANIFEST ----------------------
+# ---------------------------------------------------------
 
 def load_manifest():
     try:
@@ -146,7 +151,8 @@ def main():
     if not manifest:
         print("Creating new manifest from existing files (if present)...")
 
-        for fname, info in server_files.items():
+        for remotefname, info in server_files.items():
+            fname = str(SST_NCEI_PATH / remotefname)
             if os.path.exists(fname) and os.path.getsize(fname) == info['size']:
                 # if existing file matches size but mtime may differ -> keep local mtime only if within TIME_WINDOW
                 local_mtime = int(os.path.getmtime(fname))
@@ -164,7 +170,8 @@ def main():
 
     failed_queue = []
 
-    for fname, info in sorted(server_files.items()):
+    for remotefname, info in sorted(server_files.items()):
+        fname = str(SST_NCEI_PATH / remotefname)
         url = info['url']
 
         if is_valid_file(fname, info, manifest):

@@ -25,7 +25,7 @@ cccgistemp:
 'ushcn' is United Stated Historical Climate Network (NOAA), version 2;
 """
 
-ocean_source = "ersstv5"
+ocean_source = "ersstv6"
 """
 Which (single) source is used for ocean data. The file
 input/SBBX.xxxx is used (case insensitive search).
